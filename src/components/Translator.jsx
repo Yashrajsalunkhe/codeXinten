@@ -7,34 +7,37 @@ const Translator = () => {
   const [language, setLanguage] = useState("hi"); // Default: Hindi
   const [loading, setLoading] = useState(false);
 
+  // Use environment variable for API key
+  const RAPIDAPI_KEY = import.meta.env.VITE_RAPIDAPI_KEY;
+
   const handleTranslate = async () => {
-  setLoading(true);
+    setLoading(true);
 
-  const options = {
-    method: 'POST',
-    url: 'https://google-translate113.p.rapidapi.com/api/v1/translator/text',
-    headers: {
-      'content-type': 'application/json',
-      'X-RapidAPI-Key': '95135971d1mshf20ef7dc0c3703ep1c7e3ejsn7f1902787dbe', // ⬅️ Put your actual key here
-      'X-RapidAPI-Host': 'google-translate113.p.rapidapi.com',
-    },
-    data: {
-      from: 'en',
-      to: language,
-      text: inputText,
-    },
+    const options = {
+      method: 'POST',
+      url: 'https://google-translate113.p.rapidapi.com/api/v1/translator/text',
+      headers: {
+        'content-type': 'application/json',
+        'X-RapidAPI-Key': RAPIDAPI_KEY, // Use env variable
+        'X-RapidAPI-Host': 'google-translate113.p.rapidapi.com',
+      },
+      data: {
+        from: 'en',
+        to: language,
+        text: inputText,
+      },
+    };
+
+    try {
+      const response = await axios.request(options);
+      setTranslatedText(response.data.trans);
+    } catch (error) {
+      console.error(error);
+      alert("Translation failed. Please check API key or input.");
+    }
+
+    setLoading(false);
   };
-
-  try {
-    const response = await axios.request(options);
-    setTranslatedText(response.data.trans);
-  } catch (error) {
-    console.error(error);
-    alert("Translation failed. Please check API key or input.");
-  }
-
-  setLoading(false);
-};
 
 
   return (
